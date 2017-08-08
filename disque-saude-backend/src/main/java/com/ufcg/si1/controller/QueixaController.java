@@ -9,6 +9,8 @@ import exceptions.ObjetoInexistenteException;
 import exceptions.ObjetoInvalidoException;
 import exceptions.ObjetoJaExistenteException;
 import exceptions.Rep;
+import exceptions.findByIdException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +29,6 @@ public class QueixaController {
 
 	QueixaService queixaService = new QueixaServiceImpl();
 
-
-
     /* situação normal =0
        situação extra =1
      */
@@ -39,7 +39,7 @@ public class QueixaController {
 	// Complaints---------------------------------------------
 
 	@RequestMapping(value = "/queixa/", method = RequestMethod.GET)
-	public ResponseEntity<List<Queixa>> listAllUsers() {
+	public ResponseEntity<List<Queixa>> listQueixas() {
 		List<Queixa> queixas = queixaService.findAllQueixas();
 
 		if (queixas.isEmpty()) {
@@ -53,65 +53,80 @@ public class QueixaController {
 	// Queixa-------------------------------------------
 
 	@RequestMapping(value = "/queixa/", method = RequestMethod.POST)
-	public ResponseEntity<?> abrirQueixa(@RequestBody Queixa queixa, UriComponentsBuilder ucBuilder) {
-
-		// este codigo estava aqui, mas nao precisa mais
-		/*
-		 * if (queixaService.doesQueixaExist(queixa)) { return new
-		 * ResponseEntity(new CustomErrorType("Esta queixa já existe+
-		 * queixa.pegaDescricao()),HttpStatus.CONFLICT); }
-		 */
+	public ResponseEntity<?> abrirQueixa(@RequestBody Queixa queixa) {
 
 		try {
-			queixa.abrir();
+			queixaService.saveQueixa(queixa);
+			return new ResponseEntity<Queixa>(queixa, HttpStatus.CREATED);
 		} catch (ObjetoInvalidoException e) {
 			return new ResponseEntity<List>(HttpStatus.BAD_REQUEST);
 		}
-		queixaService.saveQueixa(queixa);
 
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.setLocation(ucBuilder.path("/api/queixa/{id}").buildAndExpand(queixa.getId()).toUri());
-
-		return new ResponseEntity<Queixa>(queixa, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/queixa/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> consultarQueixa(@PathVariable("id") long id) {
 
-		Queixa q = queixaService.findById(id);
-		if (q == null) {
-			return new ResponseEntity(new CustomErrorType("Queixa with id " + id + " not found"), HttpStatus.NOT_FOUND);
+		try {
+			Queixa q = queixaService.findById(id);
+			return new ResponseEntity<Queixa>(q, HttpStatus.OK);
+			
+		} catch (findByIdException e) {
+			
+			return new ResponseEntity<List>(HttpStatus.NOT_FOUND);//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 		}
-		return new ResponseEntity<Queixa>(q, HttpStatus.OK);
+		
+		
+
 	}
 
 	@RequestMapping(value = "/queixa/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<?> updateQueixa(@PathVariable("id") long id, @RequestBody Queixa queixa) {
+	public ResponseEntity<?> updateQueixa(@PathVariable("id") long id, @RequestBody Queixa queixa) throws findByIdException {
 
-		Queixa currentQueixa = queixaService.findById(id);
+		try{
 
-		if (currentQueixa == null) {
-			return new ResponseEntity(new CustomErrorType("Unable to upate. Queixa with id " + id + " not found."),
-					HttpStatus.NOT_FOUND);
+			Queixa currentQueixa = queixaService.findById(id);
+
+			currentQueixa.setDescricao(queixa.getDescricao());
+			currentQueixa.setComentario(queixa.getComentario());
+
+			queixaService.updateQueixa(currentQueixa);
+			
+			return new ResponseEntity<Queixa>(currentQueixa, HttpStatus.OK);
+
+		}catch (findByIdException e) {
+			
+			return new ResponseEntity<List>(HttpStatus.NOT_FOUND);//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+			/**
+			 * 		if (currentQueixa == null) {
+				return new ResponseEntity(new CustomErrorType("Unable to upate. Queixa with id " + id + " not found."),
+						HttpStatus.NOT_FOUND);
+			}
+			 */
 		}
-
-		currentQueixa.setDescricao(queixa.getDescricao());
-		currentQueixa.setComentario(queixa.getComentario());
-
-		queixaService.updateQueixa(currentQueixa);
-		return new ResponseEntity<Queixa>(currentQueixa, HttpStatus.OK);
+		
 	}
 
 	@RequestMapping(value = "/queixa/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> deleteUser(@PathVariable("id") long id) {
-
-		Queixa user = queixaService.findById(id);
-		if (user == null) {
-			return new ResponseEntity(new CustomErrorType("Unable to delete. Queixa with id " + id + " not found."),
-					HttpStatus.NOT_FOUND);
+	public ResponseEntity<?> deleteUser(@PathVariable("id") long id)  {
+		
+		try{
+			queixaService.deleteQueixaById(id);
+			return new ResponseEntity<Queixa>(HttpStatus.NO_CONTENT);
+			
+		}catch (Exception e) {
+			
+			return new ResponseEntity<List>(HttpStatus.NOT_FOUND);//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+			
+			/**
+			 * 
+					if (user == null) {
+						return new ResponseEntity(new CustomErrorType("Unable to delete. Queixa with id " + id + " not found."),
+								HttpStatus.NOT_FOUND);
+					}
+			 */
 		}
-		queixaService.deleteQueixaById(id);
-		return new ResponseEntity<Queixa>(HttpStatus.NO_CONTENT);
+		
 	}
 
 	@RequestMapping(value = "/queixa/fechamento", method = RequestMethod.POST)

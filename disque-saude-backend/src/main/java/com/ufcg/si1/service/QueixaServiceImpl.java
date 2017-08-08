@@ -1,6 +1,14 @@
 package com.ufcg.si1.service;
 
 import com.ufcg.si1.model.Queixa;
+import com.ufcg.si1.util.CustomErrorType;
+
+import exceptions.ObjetoInvalidoException;
+import exceptions.deleteQueixaByIdException;
+import exceptions.findByIdException;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,7 +56,8 @@ public class QueixaServiceImpl implements QueixaService {
         return queixas;
     }
 
-    public void saveQueixa(Queixa queixa) {
+    public void saveQueixa(Queixa queixa) throws ObjetoInvalidoException {
+    	queixa.abrir();
         queixa.setId(counter.incrementAndGet());
         queixas.add(queixa);
     }
@@ -58,14 +67,16 @@ public class QueixaServiceImpl implements QueixaService {
         queixas.set(index, queixa);
     }
 
-    public void deleteQueixaById(long id) {
+    public void deleteQueixaById(long id)throws deleteQueixaByIdException {
 
         for (Iterator<Queixa> iterator = queixas.iterator(); iterator.hasNext(); ) {
             Queixa q = iterator.next();
             if (q.getId() == id) {
                 iterator.remove();
+                return;
             }
         }
+        throw new deleteQueixaByIdException("Unable to delete. ");
     }
 
     @Override
@@ -83,13 +94,13 @@ public class QueixaServiceImpl implements QueixaService {
         queixas.clear();
     }
 
-    public Queixa findById(long id) {
+    public Queixa findById(long id) throws findByIdException {
         for (Queixa queixa : queixas) {
             if (queixa.getId() == id) {
                 return queixa;
             }
         }
-        return null;
+        throw new findByIdException(null);
     }
 
 
