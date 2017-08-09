@@ -131,7 +131,7 @@ public class QueixaController {
 
 	@RequestMapping(value = "/queixa/fechamento", method = RequestMethod.POST)
 	public ResponseEntity<?> fecharQueixa(@RequestBody Queixa queixaAFechar) {
-		queixaAFechar.situacao = Queixa.FECHADA;
+		queixaAFechar.situacao = new QueixaFechada();
 		queixaService.updateQueixa(queixaAFechar);
 		return new ResponseEntity<Queixa>(queixaAFechar, HttpStatus.OK);
 	}
@@ -142,7 +142,7 @@ public class QueixaController {
 	        Iterator<Queixa> it = queixaService.getIterator();
 	        for (Iterator<Queixa> it1 = it; it1.hasNext(); ) {
 	            Queixa q = it1.next();
-	            if (q.getSituacao() == Queixa.ABERTA)
+	            if (q.getSituacao() instanceof QueixaAberta)
 	                contador++;
 	        }
 

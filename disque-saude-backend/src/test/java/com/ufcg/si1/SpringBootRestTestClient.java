@@ -51,7 +51,7 @@ public class SpringBootRestTestClient {
         RestTemplate restTemplate = new RestTemplate();
 
         //criando queixa com -1, para gerar codigo depois
-        Queixa q = new Queixa(-1,"Muitos ratos no meio da rua",1,"",
+        Queixa q = new Queixa(-1,"Muitos ratos no meio da rua",new QueixaAberta(),"",
                 "Jorge de Baixinho", "jorginho@gmail.com", "rua dos bobos", "SP",
                 "São Paulo");
         URI uri = restTemplate.postForLocation(REST_SERVICE_URI+"/queixa/", q, Queixa.class);
@@ -62,7 +62,7 @@ public class SpringBootRestTestClient {
     private static void updateQueixa() {
         System.out.println("Testing update Queixa API----------");
         RestTemplate restTemplate = new RestTemplate();
-        Queixa q = new Queixa(1,"Nova queixa com ID 1",1,"",
+        Queixa q = new Queixa(1,"Nova queixa com ID 1",new QueixaAberta(),"",
                 "Jorge de Baixinho", "jorginho@gmail.com", "rua dos bobos", "SP",
                 "São Paulo");
         restTemplate.put(REST_SERVICE_URI+"/queixa/1", q);
