@@ -1,15 +1,6 @@
 package com.ufcg.si1.service;
 
 import com.ufcg.si1.model.Queixa;
-import com.ufcg.si1.model.QueixaFechada;
-import com.ufcg.si1.util.CustomErrorType;
-
-import exceptions.ObjetoInvalidoException;
-import exceptions.deleteQueixaByIdException;
-import exceptions.findByIdException;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,20 +24,20 @@ public class QueixaServiceImpl implements QueixaService {
         List<Queixa> queixas = new ArrayList<Queixa>();
 
         queixas.add(new Queixa(counter.incrementAndGet(), "Passei mal com uma coxinha",
-                new QueixaFechada(), "", "Jose Silva",
+                Queixa.FECHADA, "", "Jose Silva",
                 "jose@gmail.com", "rua dos tolos", "PE", "Recife"));
 
 
         queixas.add(new Queixa(counter.incrementAndGet(),
-                "Bacalhau estragado, passamos mal!", new QueixaFechada(), "",
+                "Bacalhau estragado, passamos mal!", Queixa.FECHADA, "",
                 "Ailton Sousa", "ailton@gmail.com", "rua dos bobos", "PB",
                 "Joao Pessoa"));
 
-        queixas.add(new Queixa(counter.incrementAndGet(), "Nossa rua estah muito suja", new QueixaFechada(), "",
+        queixas.add(new Queixa(counter.incrementAndGet(), "Nossa rua estah muito suja", Queixa.FECHADA, "",
                 "Jose Silva", "jose@gmail.com", "rua dos tolos", "PE", "Recife"));
 
 
-        queixas.add(new Queixa(counter.incrementAndGet(), "iluminacao horrivel, muitos assaltos", new QueixaFechada(), "",
+        queixas.add(new Queixa(counter.incrementAndGet(), "iluminacao horrivel, muitos assaltos", Queixa.FECHADA, "",
                 "Ailton Sousa", "ailton@gmail.com", "rua dos bobos", "PB",
                 "Joao Pessoa"));
 
@@ -57,8 +48,7 @@ public class QueixaServiceImpl implements QueixaService {
         return queixas;
     }
 
-    public void saveQueixa(Queixa queixa) throws ObjetoInvalidoException {
-    	queixa.abrir();
+    public void saveQueixa(Queixa queixa) {
         queixa.setId(counter.incrementAndGet());
         queixas.add(queixa);
     }
@@ -68,16 +58,14 @@ public class QueixaServiceImpl implements QueixaService {
         queixas.set(index, queixa);
     }
 
-    public void deleteQueixaById(long id)throws deleteQueixaByIdException {
+    public void deleteQueixaById(long id) {
 
         for (Iterator<Queixa> iterator = queixas.iterator(); iterator.hasNext(); ) {
             Queixa q = iterator.next();
             if (q.getId() == id) {
                 iterator.remove();
-                return;
             }
         }
-        throw new deleteQueixaByIdException("Unable to delete. ");
     }
 
     @Override
@@ -95,13 +83,13 @@ public class QueixaServiceImpl implements QueixaService {
         queixas.clear();
     }
 
-    public Queixa findById(long id) throws findByIdException {
+    public Queixa findById(long id) {
         for (Queixa queixa : queixas) {
             if (queixa.getId() == id) {
                 return queixa;
             }
         }
-        throw new findByIdException(null);
+        return null;
     }
 
 

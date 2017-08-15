@@ -11,7 +11,11 @@ public class Queixa {
 
 	private Pessoa solicitante;
 
-	public SituacaoQueixa situacao;
+	public int situacao; // usa variaveis estaticas abaixo
+	/* situacoes da queixa */
+	public static final int ABERTA = 1;
+	public static final int EM_ANDAMENTO = 2;
+	public static final int FECHADA = 3;
 
 	private String comentario = ""; // usado na atualizacao da queixa
 
@@ -19,7 +23,7 @@ public class Queixa {
 		id=0;
 	}
 
-	public Queixa(long id, String descricao, SituacaoQueixa situacao, String comentario,
+	public Queixa(long id, String descricao, int situacao, String comentario,
                   String nome, String email,
 				  String rua, String uf, String cidade) {
 		this.id = id;
@@ -45,27 +49,25 @@ public class Queixa {
 		this.descricao = descricao;
 	}
 
-	public SituacaoQueixa getSituacao() {
+	public int getSituacao() {
 		return situacao;
 	}
 
 	public void abrir() throws ObjetoInvalidoException {
-		try {
-			this.situacao = situacao.abrir();
-		} catch (Exception e) {
+		if (this.situacao != Queixa.EM_ANDAMENTO)
+			this.situacao = Queixa.ABERTA;
+		else
 			throw new ObjetoInvalidoException("Status inválido");
-		}
 	}
 
 	public void fechar(String coment) throws ObjetoInvalidoException {
-		try {
-			this.situacao = situacao.fechar();
-			this.comentario = coment;	
-		} catch (Exception e) {
-			throw new ObjetoInvalidoException("Status inválido");
-		}
-		
-}
+		if (this.situacao == Queixa.EM_ANDAMENTO
+				|| this.situacao == Queixa.ABERTA) {
+			this.situacao = Queixa.FECHADA;
+			this.comentario = coment;
+		} else
+			throw new ObjetoInvalidoException("Status Inválido");
+	}
 
 	public String getComentario() {
 		return comentario;
