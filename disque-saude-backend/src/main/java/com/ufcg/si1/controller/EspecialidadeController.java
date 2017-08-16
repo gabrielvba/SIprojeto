@@ -25,11 +25,12 @@ import exceptions.Rep;
 
 public class EspecialidadeController {
 
-	   EspecialidadeService especialidadeService = new EspecialidadeServiceImpl();
-	   UnidadeSaudeService unidadeSaudeService = new UnidadeSaudeServiceImpl();
-	    //Especialidade
+	 EspecialidadeService especialidadeService = new EspecialidadeServiceImpl();
+	 UnidadeSaudeService unidadeSaudeService = new UnidadeSaudeServiceImpl();
+	 
+	//Especialidade
 
-	    @RequestMapping(value = "/especialidade/unidades", method = RequestMethod.GET)
+	  @RequestMapping(value = "/especialidade/unidades", method = RequestMethod.GET)
 	    public ResponseEntity<?> consultaEspecialidadeporUnidadeSaude(@RequestBody int codigoUnidadeSaude) {
 
 	        Object us = null;
@@ -47,7 +48,7 @@ public class EspecialidadeController {
 
 	        return new ResponseEntity<List>(HttpStatus.NOT_FOUND);
 	    }
-	    
+
 	    @RequestMapping(value = "/especialidade/", method = RequestMethod.POST)
 	    public ResponseEntity<String> incluirEspecialidade(@RequestBody Especialidade esp, UriComponentsBuilder ucBuilder) {
 	        try {
@@ -73,4 +74,5 @@ public class EspecialidadeController {
 	        }
 	        return new ResponseEntity<Especialidade>(q, HttpStatus.OK);
 	    }
+
 }
