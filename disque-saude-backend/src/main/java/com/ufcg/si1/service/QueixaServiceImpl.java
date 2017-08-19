@@ -1,6 +1,12 @@
 package com.ufcg.si1.service;
 
 import com.ufcg.si1.model.Queixa;
+import com.ufcg.si1.util.CustomErrorType;
+
+import exceptions.ObjetoInvalidoException;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,13 +50,26 @@ public class QueixaServiceImpl implements QueixaService {
         return queixas;
     }
 
-    public List<Queixa> findAllQueixas() {
-        return queixas;
+    //mexi mas ta errado, fazer pra listar as queixas
+    public List<Queixa> findAllQueixas() throws ObjetoInvalidoException {
+    	
+		if (queixas.isEmpty()) {
+			throw new ObjetoInvalidoException("Vazio"); 
+			
+		}	return queixas;
     }
+    
 
-    public void saveQueixa(Queixa queixa) {
-        queixa.setId(counter.incrementAndGet());
-        queixas.add(queixa);
+
+    public Queixa salvarQueixa(Queixa queixa) throws ObjetoInvalidoException {
+    	if (queixa == null) {
+			throw new ObjetoInvalidoException("Impossivel");
+		}else{
+
+	        queixa.setId(counter.incrementAndGet());
+	        queixas.add(queixa);
+	        return queixa;
+		}
     }
 
     public void updateQueixa(Queixa queixa) {
@@ -58,14 +77,17 @@ public class QueixaServiceImpl implements QueixaService {
         queixas.set(index, queixa);
     }
 
-    public void deleteQueixaById(long id) {
-
-        for (Iterator<Queixa> iterator = queixas.iterator(); iterator.hasNext(); ) {
-            Queixa q = iterator.next();
-            if (q.getId() == id) {
-                iterator.remove();
-            }
-        }
+    public void deleteQueixaById(long id) throws ObjetoInvalidoException {
+    	
+    	Queixa queixaExcluida = getQueixaId(id);
+    	
+		if (queixaExcluida == null) {
+			throw new ObjetoInvalidoException("Unable to delete. Queixa with id " + id + " not found.");
+		}else{
+			deleteQueixaById(id);
+		}
+		
+		
     }
 
     @Override
@@ -83,7 +105,7 @@ public class QueixaServiceImpl implements QueixaService {
         queixas.clear();
     }
 
-    public Queixa findById(long id) {
+    public Queixa getQueixaId(long id) {
         for (Queixa queixa : queixas) {
             if (queixa.getId() == id) {
                 return queixa;

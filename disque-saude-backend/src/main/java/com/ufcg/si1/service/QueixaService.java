@@ -6,20 +6,28 @@ import java.util.List;
 
 import com.ufcg.si1.model.Queixa;
 
+import exceptions.ObjetoInvalidoException;
+
 public interface QueixaService {
+	
+	Queixa salvarQueixa(Queixa queixa) throws ObjetoInvalidoException;
+	
+	Queixa getQueixaId(long id) throws ObjetoInvalidoException;
+	
+	void deleteQueixaById(long id) throws ObjetoInvalidoException;
 
-	List<Queixa> findAllQueixas();
+	List<Queixa> findAllQueixas() throws ObjetoInvalidoException;
 
 
-    void saveQueixa(Queixa queixa);
+ 
 
 
-	Queixa findById(long id);
+	
 
 	void updateQueixa(Queixa user);
 
 
-	void deleteQueixaById(long id);
+	
 
     int size();
 

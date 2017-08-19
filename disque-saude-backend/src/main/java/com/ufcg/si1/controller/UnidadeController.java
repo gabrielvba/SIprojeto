@@ -24,7 +24,7 @@ import br.edu.ufcg.Hospital;
 import exceptions.ObjetoJaExistenteException;
 import exceptions.Rep;
 
-public class UnidadeController {
+public class UnidadeController{
 
 
 	UnidadeSaudeService unidadeSaudeService = new UnidadeSaudeServiceImpl();
